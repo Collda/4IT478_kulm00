@@ -24,14 +24,15 @@ import java.util.UUID;
  */
 public class AppTest {
     private ChromeDriver driver;
+    private String PREFIX = "https://digitalnizena.cz/rukovoditel/";
 
     @Before
     public void init() {
-        // System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-//        ChromeDriverService service = new ChromeDriverService()
-        ChromeOptions cho = new ChromeOptions();
-        cho.addArguments("headless");
-        driver = new ChromeDriver(cho);
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+       // ChromeDriverService service = new ChromeDriverService();
+        //ChromeOptions cho = new ChromeOptions();
+        //cho.addArguments("headless");
+        driver = new ChromeDriver();
 //        driver.manage().window().maximize();
     }
 
@@ -39,6 +40,58 @@ public class AppTest {
     public void tearDown() {
 //        driver.close();
     }
+
+    @Test
+    public void valid_login(){
+        driver.get(PREFIX);
+
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("vse456ru");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+        //passwordInput.sendKeys(Keys.ENTER);
+        driver.close();
+
+    }
+
+
+    @Test
+    public void invalid_login(){
+        driver.get(PREFIX);
+
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("bad");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        //passwordInput.sendKeys(Keys.ENTER);
+        WebElement alert = driver.findElement(By.cssSelector(".alert"));
+        Assert.assertTrue(!driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel"));
+        Assert.assertTrue(alert != null);
+        driver.close();
+    }
+
+    @Test
+    public void user_logOff(){
+        driver.get(PREFIX);
+
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("vse456ru");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+
+
+    }
+
+
 
     @Test
     public void google1_should_pass() {

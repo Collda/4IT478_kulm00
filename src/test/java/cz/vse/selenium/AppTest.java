@@ -212,7 +212,7 @@ public class AppTest {
 
 
     }
-
+/*
 
     @Test
     public void google1_should_pass() {
@@ -426,6 +426,6 @@ public class AppTest {
 
         // here in code, we are 100% sure, that button is visible
     }
-
+*/
 
 }

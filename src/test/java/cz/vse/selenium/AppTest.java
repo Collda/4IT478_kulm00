@@ -145,6 +145,73 @@ public class AppTest {
 
     }
 
+    @Test
+    public void create_NeWproject() throws InterruptedException {
+        driver.get(PREFIX);
+
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("vse456ru");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+
+        WebElement menu = driver.findElement(By.className("fa-reorder"));
+        menu.click();
+
+        WebElement createButton = driver.findElement(By.className("btn-primary"));
+        createButton.click();
+
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
+        WebElement saveButton = driver.findElement(By.className("btn-primary-modal-action"));
+
+
+
+        WebElement name = driver.findElement(By.id("fields_158"));
+        name.sendKeys("Novy projekt");
+
+        Select select = new Select(driver.findElement(By.id("fields_156")));
+        select.selectByIndex(1);
+
+        WebElement calendarButton = driver.findElement(By.className("date-set"));
+        calendarButton.click();
+
+        WebElement searchInput = driver.findElement(By.id("fields_159"));
+        searchInput.click();
+        driver.findElement(By.cssSelector("td[class='active day']")).click();
+
+        saveButton.click();
+
+        WebElement menu2 = driver.findElement(By.className("fa-reorder"));
+        menu2.click();
+
+        /*WebElement newRow = driver.findElement(By.className("a.item_heading_link"));
+        Assert.assertTrue(newRow.getText().equals("Novy projekt"));*/
+        Thread.sleep(2000);
+        int index = 0;
+        WebElement baseTable = driver.findElement(By.cssSelector("[class='table table-striped table-bordered table-hover']"));
+        List<WebElement> tableRows = baseTable.findElements(By.tagName("td"));
+        driver.findElement(By.xpath("//td[contains(div, 'EMP_COMPANY')]/following-sibling::td/div[@id = 'tdDataDiv']")).getText();
+
+        //tableRows.get(index).getText();
+
+       /* for (WebElement row:tableRows){
+            Assert.assertTrue(row.getText().equals("Novy projekt"));
+
+        }*/
+
+        //Assert.assertTrue(tableRows.getText().equals("Novy projekt"));
+
+
+
+
+
+
+
+
+    }
 
 
     @Test

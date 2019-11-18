@@ -17,6 +17,9 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.UUID;
 
 /**
@@ -260,7 +263,7 @@ public class AppTest {
 
     @Test
 
-    public void created_Task(){
+    public void created_Task() throws ParseException {
         driver.get(PREFIX);
 
 
@@ -273,7 +276,7 @@ public class AppTest {
         loginButton.click();
         Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
 
-
+        //Create project
         WebElement menu = driver.findElement(By.className("fa-reorder"));
         menu.click();
         WebElement createButton = driver.findElement(By.className("btn-primary"));
@@ -295,14 +298,185 @@ public class AppTest {
         saveButton.click();
 
         //Creating task
+        WebElement task = driver.findElement(By.className("btn-primary"));
+        task.click();
+        //WebDriverWait waitt = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fields_168")));
+        WebElement searchInput2 = driver.findElement(By.id("fields_168"));
+        searchInput2.sendKeys("Babicka pece kolace");
+
+        //Filling the description field
+        driver.switchTo().frame(driver.findElement(By.tagName("iframe")));
+        driver.findElement(By.tagName("body")).sendKeys("Kolace budou povidlove a tvarohove");
+        driver.switchTo().defaultContent();
+        driver.findElement(By.className("btn-primary-modal-action")).click();
+
+        wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        List<WebElement> elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        List<WebElement> cells = elements.get(1).findElements(By.tagName("td"));
+        List<WebElement> content = cells.get(1).findElements(By.tagName("a"));
+        content.get(2).click();
 
 
+        //Then
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-bordered table-hover table-item-details'] tr")));
+        elements = driver.findElements(By.cssSelector("[class='table table-bordered table-hover table-item-details'] tr"));
+
+
+        // Check name - "Babicka pece kolace"
+        WebElement nameTask = driver.findElement(By.className("caption"));
+        Assert.assertTrue(nameTask.getText().equals("Babicka pece kolace"));
+
+        // CHeck description "Kolace budou povidlove a tvarohove"
+        WebElement description = driver.findElement(By.className("fieldtype_textarea_wysiwyg"));
+        System.out.println(description.getText());
+        Assert.assertTrue(description.getText().equals("Kolace budou povidlove a tvarohove"));
+
+        // Date check
+        cells = elements.get(1).findElements(By.tagName("td"));
+        Date date =new SimpleDateFormat("MM/dd/yyyy").parse(cells.get(0).getText().substring(0, 10));
+        Date sysdate = new Date();
+        Assert.assertTrue(!elements.contains(date.equals(sysdate)));
+
+        // Type check
+        cells = elements.get(3).findElements(By.tagName("td"));
+        content= cells.get(0).findElements(By.tagName("div"));
+        Assert.assertTrue(content.get(0).getText().equals("Task"));
+
+        // State check - new
+        cells = elements.get(4).findElements(By.tagName("td"));
+        content = cells.get(0).findElements(By.tagName("div"));
+        Assert.assertTrue(content.get(0).getText().equals("New"));
+
+        // Prio check - Medium
+        cells = elements.get(5).findElements(By.tagName("td"));
+        content = cells.get(0).findElements(By.tagName("div"));
+        Assert.assertTrue(content.get(0).getText().equals("Medium"));
+
+        //Delete task
+        driver.executeScript("window.history.go(-1)");
+        wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        cells = elements.get(1).findElements(By.tagName("td"));
+        content = cells.get(1).findElements(By.tagName("a"));
+        content.get(0).click();
+        wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
+        driver.findElement(By.className("btn-primary-modal-action")).click();
+
+        driver.close();
+
+    }
+
+    @Test
+
+    public void created_Task2(){
+        driver.get(PREFIX);
+
+
+        //Login
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("vse456ru");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+
+        //Create project
+        WebElement menu = driver.findElement(By.className("fa-reorder"));
+        menu.click();
+        WebElement createButton = driver.findElement(By.className("btn-primary"));
+        createButton.click();
+
+        //Filling the form (Project) and save
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
+        WebElement saveButton = driver.findElement(By.className("btn-primary-modal-action"));
+        WebElement name = driver.findElement(By.id("fields_158"));
+        name.sendKeys("Novy projekt");
+        Select select = new Select(driver.findElement(By.id("fields_156")));
+        select.selectByIndex(1);
+        WebElement calendarButton = driver.findElement(By.className("date-set"));
+        calendarButton.click();
+        WebElement searchInput = driver.findElement(By.id("fields_159"));
+        searchInput.click();
+        driver.findElement(By.cssSelector("td[class='active day']")).click();
+        saveButton.click();
+
+        //Cycle for creating tasks
+
+        for (int x = 0;x<7;x++){
+
+            //Creating task
+            WebElement task = driver.findElement(By.className("btn-primary"));
+            task.click();
+            //WebDriverWait waitt = new WebDriverWait(driver, 2);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fields_168")));
+            WebElement searchInput2 = driver.findElement(By.id("fields_168"));
+            searchInput2.sendKeys("Babicka pece kolace");
+
+            Select selectState = new Select(driver.findElement(By.id("fields_169")));
+            selectState.selectByIndex(x);
+
+            //Filling the description field
+            driver.switchTo().frame(driver.findElement(By.tagName("iframe")));
+            driver.findElement(By.tagName("body")).sendKeys("Kolace budou povidlove a tvarohove");
+            driver.switchTo().defaultContent();
+            driver.findElement(By.className("btn-primary-modal-action")).click();
+        }
+
+        // 3 tasks shown
+        wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        List<WebElement> elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+       //1st row of table is also row (name ...etc) so we have to deal with it
+       Assert.assertTrue(elements.size() == 4);
+
+
+        // Change filter
+        driver.findElement(By.className("filters-preview-condition-include")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='chosen-choices'] a")));
+        List<WebElement> filters = driver.findElements(By.cssSelector("[class='chosen-choices'] a"));
+        filters.get(1).click();
+        driver.findElement(By.className("btn-primary-modal-action")).click();
+
+        // 3 tasks shown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        //1st row of table is also row (name ...etc) so we have to deal with it
+        Assert.assertTrue(elements.size() == 3);
+
+        // Clear filters
+        driver.findElement(By.className("filters-preview-condition-include")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='chosen-choices'] a")));
+        filters = driver.findElements(By.cssSelector("[class='chosen-choices'] a"));
+        filters.get(1).click();
+        filters.get(0).click();
+        driver.findElement(By.className("btn-primary-modal-action")).click();
+
+        // All 7 tasks shown
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        //1st row of table is also row (name ...etc) so we have to deal with it
+        Assert.assertTrue(elements.size() == 8);
+
+        // Clear all created tasks
+        driver.findElement(By.id("select_all_items")).click();
+        //doubleclick
+        driver.findElement(By.cssSelector("[class='btn btn-default dropdown-toggle']")).click();
+        driver.findElement(By.cssSelector("[class='btn btn-default dropdown-toggle']")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Delete")));
+        driver.findElement(By.linkText("Delete")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
+        driver.findElement(By.className("btn-primary-modal-action")).click();
 
 
     }
 
 /*
-
     @Test
     public void google1_should_pass() {
         driver.get("https://www.google.com/");

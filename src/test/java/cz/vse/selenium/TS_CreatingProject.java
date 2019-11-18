@@ -367,6 +367,8 @@ public class TS_CreatingProject {
         driver.findElement(By.className("btn-primary-modal-action")).click();
 
 
+        driver.close();
+
     }
 
 }

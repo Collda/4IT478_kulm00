@@ -24,7 +24,7 @@ public class TS_CreatingProject {
     @Before
     public void init() {
         //System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-        //driver = new ChromeDriver();
+        driver = new ChromeDriver();
 
         ChromeOptions cho = new ChromeOptions();
         cho.addArguments("headless");

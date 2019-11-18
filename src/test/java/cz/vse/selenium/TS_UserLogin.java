@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class TS_UserLogin {
@@ -17,12 +19,12 @@ public class TS_UserLogin {
 
     @Before
     public void init() {
-        //System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-        //driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+        driver = new ChromeDriver();
 
-        ChromeOptions cho = new ChromeOptions();
+        /*ChromeOptions cho = new ChromeOptions();
         cho.addArguments("headless");
-        driver = new ChromeDriver(cho);
+        driver = new ChromeDriver(cho);*/
     }
 
     @After
@@ -89,6 +91,8 @@ public class TS_UserLogin {
         //Logoff
         WebElement menu = driver.findElement(By.className("username"));
         menu.click();
+        WebDriverWait wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a[href*='logoff']")));
         driver.findElement(By.cssSelector("a[href*='logoff']")).click();
 
         //THEN

@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 
 public class TS_UserLogin {
@@ -16,8 +17,12 @@ public class TS_UserLogin {
 
     @Before
     public void init() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-        driver = new ChromeDriver();
+        //System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+        //driver = new ChromeDriver();
+
+        ChromeOptions cho = new ChromeOptions();
+        cho.addArguments("headless");
+        driver = new ChromeDriver(cho);
     }
 
     @After

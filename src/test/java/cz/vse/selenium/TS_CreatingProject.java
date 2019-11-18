@@ -145,12 +145,7 @@ public class TS_CreatingProject {
 
         Assert.assertTrue(tableRows.getText().equals("Novy projekt"));
         */
-
-
-
-
-
-
+       
 
     }
 

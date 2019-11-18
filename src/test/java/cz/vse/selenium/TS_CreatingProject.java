@@ -23,11 +23,8 @@ public class TS_CreatingProject {
     @Before
     public void init() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-        // ChromeDriverService service = new ChromeDriverService();
-        //ChromeOptions cho = new ChromeOptions();
-        //cho.addArguments("headless");
         driver = new ChromeDriver();
-//      driver.manage().window().maximize();
+
     }
 
     @After

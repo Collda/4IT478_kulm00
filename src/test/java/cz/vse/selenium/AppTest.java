@@ -111,8 +111,8 @@ public class AppTest {
         WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
         loginButton.click();
         Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
-        //passwordInput.sendKeys(Keys.ENTER);
 
+        //passwordInput.sendKeys(Keys.ENTER);
         //driver.findElement(By.cssSelector("a[href*='logoff']")).click();
 
         WebElement menu = driver.findElement(By.className("fa-reorder"));
@@ -141,14 +141,16 @@ public class AppTest {
         WebElement error = driver.findElement(By.id("fields_158-error"));
         Assert.assertTrue(error.getText().equals("This field is required!"));
 
+        driver.close();
 
 
     }
 
     @Test
-    public void create_NeWproject() throws InterruptedException {
+    public void create_NewProject() throws InterruptedException {
         driver.get(PREFIX);
 
+        //Login
         WebElement usernameInput = driver.findElement(By.name("username"));
         usernameInput.sendKeys("rukovoditel");
         WebElement passwordInput = driver.findElement(By.name("password"));
@@ -157,38 +159,79 @@ public class AppTest {
         loginButton.click();
         Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
 
+        //Go to Project table and save the count of rows
         WebElement menu = driver.findElement(By.className("fa-reorder"));
         menu.click();
-
+        WebDriverWait waitt = new WebDriverWait(driver, 1);
+        waitt.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        List<WebElement> elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        int countBefore = elements.size();
         WebElement createButton = driver.findElement(By.className("btn-primary"));
         createButton.click();
 
+        //Filling the form and save
         WebDriverWait wait = new WebDriverWait(driver, 2);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
         WebElement saveButton = driver.findElement(By.className("btn-primary-modal-action"));
-
-
-
         WebElement name = driver.findElement(By.id("fields_158"));
         name.sendKeys("Novy projekt");
-
         Select select = new Select(driver.findElement(By.id("fields_156")));
         select.selectByIndex(1);
-
         WebElement calendarButton = driver.findElement(By.className("date-set"));
         calendarButton.click();
-
         WebElement searchInput = driver.findElement(By.id("fields_159"));
         searchInput.click();
         driver.findElement(By.cssSelector("td[class='active day']")).click();
-
         saveButton.click();
 
+        //Then
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Tasks"));
         WebElement menu2 = driver.findElement(By.className("fa-reorder"));
         menu2.click();
 
-        /*WebElement newRow = driver.findElement(By.className("a.item_heading_link"));
-        Assert.assertTrue(newRow.getText().equals("Novy projekt"));*/
+        wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr")));
+        elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        int countAfter = elements.size();
+
+        // Control check (before was fewer rows than now)
+        Assert.assertTrue(countBefore < countAfter);
+
+        //Helpfull removal of first row in table (header)
+        elements.remove(0);
+
+        // Helpful variable
+        WebElement helpRow= null;
+
+        // Cycle going through all fields in table
+        for (WebElement row : elements)
+        {
+            List<WebElement> cells = row.findElements(By.tagName("td"));
+            if (cells.get(4).getText().equals("Novy projekt"))
+            {
+                helpRow = row;
+                List<WebElement> buttons = row.findElements(By.tagName("a"));
+                buttons.get(0).click();
+            }
+        }
+
+        // CHECK, Is project exists and its mine
+        Assert.assertTrue(helpRow != null);
+
+        // Deleting the project and check deletion
+        wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("uniform-delete_confirm")));
+        driver.findElement(By.id("delete_confirm")).click();
+        driver.findElement(By.className("btn-primary-modal-action")).click();
+        elements = driver.findElements(By.cssSelector("[class='table table-striped table-bordered table-hover'] tr"));
+        Assert.assertTrue(!elements.contains(helpRow));
+
+        driver.close();
+
+
+        //Some failed attempts
+       /* WebElement newRow = driver.findElement(By.className("a.item_heading_link"));
+        Assert.assertTrue(newRow.getText().equals("Novy projekt"));
         Thread.sleep(2000);
         int index = 0;
         WebElement baseTable = driver.findElement(By.cssSelector("[class='table table-striped table-bordered table-hover']"));
@@ -197,13 +240,15 @@ public class AppTest {
 
         //tableRows.get(index).getText();
 
-       /* for (WebElement row:tableRows){
+
+       for (WebElement row:tableRows){
+
             Assert.assertTrue(row.getText().equals("Novy projekt"));
 
-        }*/
+        }
 
-        //Assert.assertTrue(tableRows.getText().equals("Novy projekt"));
-
+        Assert.assertTrue(tableRows.getText().equals("Novy projekt"));
+        */
 
 
 
@@ -212,6 +257,50 @@ public class AppTest {
 
 
     }
+
+    @Test
+
+    public void created_Task(){
+        driver.get(PREFIX);
+
+
+        //Login
+        WebElement usernameInput = driver.findElement(By.name("username"));
+        usernameInput.sendKeys("rukovoditel");
+        WebElement passwordInput = driver.findElement(By.name("password"));
+        passwordInput.sendKeys("vse456ru");
+        WebElement loginButton = driver.findElement(By.cssSelector(".btn"));
+        loginButton.click();
+        Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
+
+
+        WebElement menu = driver.findElement(By.className("fa-reorder"));
+        menu.click();
+        WebElement createButton = driver.findElement(By.className("btn-primary"));
+        createButton.click();
+
+        //Filling the form (Project) and save
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-primary-modal-action")));
+        WebElement saveButton = driver.findElement(By.className("btn-primary-modal-action"));
+        WebElement name = driver.findElement(By.id("fields_158"));
+        name.sendKeys("Novy projekt");
+        Select select = new Select(driver.findElement(By.id("fields_156")));
+        select.selectByIndex(1);
+        WebElement calendarButton = driver.findElement(By.className("date-set"));
+        calendarButton.click();
+        WebElement searchInput = driver.findElement(By.id("fields_159"));
+        searchInput.click();
+        driver.findElement(By.cssSelector("td[class='active day']")).click();
+        saveButton.click();
+
+        //Creating task
+
+
+
+
+    }
+
 /*
 
     @Test

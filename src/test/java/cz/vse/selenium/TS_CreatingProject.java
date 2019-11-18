@@ -44,6 +44,8 @@ public class TS_CreatingProject {
 
     @Test
     public void create_NewProject() throws InterruptedException {
+
+        //GIVEN
         driver.get(PREFIX);
 
         //Login
@@ -145,7 +147,7 @@ public class TS_CreatingProject {
 
         Assert.assertTrue(tableRows.getText().equals("Novy projekt"));
         */
-       
+
 
     }
 

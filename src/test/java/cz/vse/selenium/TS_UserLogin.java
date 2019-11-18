@@ -45,6 +45,8 @@ public class TS_UserLogin {
 
     @Test
     public void valid_login(){
+
+        //GIVEN + WHEN
         driver.get(PREFIX);
         //User login
         WebElement usernameInput = driver.findElement(By.name("username"));
@@ -62,6 +64,8 @@ public class TS_UserLogin {
 
     @Test
     public void invalid_login(){
+
+        //GIVEN + WHEN
         driver.get(PREFIX);
         //User login
         WebElement usernameInput = driver.findElement(By.name("username"));
@@ -80,8 +84,9 @@ public class TS_UserLogin {
 
     @Test
     public void user_logOff(){
-        driver.get(PREFIX);
 
+        //GIVEN
+        driver.get(PREFIX);
         //User login
         WebElement usernameInput = driver.findElement(By.name("username"));
         usernameInput.sendKeys("rukovoditel");
@@ -91,10 +96,13 @@ public class TS_UserLogin {
         loginButton.click();
         Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel | Dashboard"));
 
+        //WHEN
         //Logoff
         WebElement menu = driver.findElement(By.className("username"));
         menu.click();
         driver.findElement(By.cssSelector("a[href*='logoff']")).click();
+
+        //THEN
         Assert.assertTrue(driver.getTitle().startsWith("Rukovoditel"));
         WebElement h3 = driver.findElement(By.className("form-title"));
         Assert.assertTrue(h3.getText().equals("Login"));
